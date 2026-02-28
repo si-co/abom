@@ -1,12 +1,18 @@
-# ABOM scheme implementation
+# At-Compromise Security: The Case for Alert Blindness
 **WARNING**: This software is **not** production-ready and it might contain security vulnerabilities.
 
 This code accompanies the paper ["At-Compromise Security: The Case for Alert Blindness"](https://eprint.iacr.org/2026/252) by Martin R. Albrecht, Simone Colombo, Benjamin Dowling and Rikke Bjerg Jensen to appear at EUROCRYPT 2026.
 
-This directory contains the Go (1.24.6) reference implementation of the ABOM scheme (Figure 10 of the full version linked above).
+The root directory of the repository contains the Go reference implementation of the ABOM scheme (Figure 10 of the full version linked above). The [scripts](scripts) directory contains a SageMath script that make it easier to explore the effect of the personal secret distribution S on the advantage in Definition 1 in the full version.
 
-## Running tests
+## ABOM scheme implementation
+This directory contains the Go reference implementation of the ABOM scheme (Figure 10 of the full version linked above).
 
-From this directory, run:
+### Running tests
+
+Provided you have Go version 1.24.6 or above installed, from this directory, run:
 
   `go test`
+
+## Advantage estimation
+Provided you have SageMath version 10.x installed, you can use the function in the Sage interactive shell by loading the code with `load("scripts/pw.py)` from the root of the repository. See the examples at the end of [scripts/pw.py](scripts/pw.py).

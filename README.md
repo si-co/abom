@@ -16,3 +16,8 @@ Provided you have Go version 1.24.6 or above installed, from this directory, run
 
 ## Advantage estimation
 Provided you have SageMath version 10.x installed, you can use the function in the Sage interactive shell by loading the code with `load("scripts/pw.py")` from the root of the repository. See the examples at the end of [scripts/pw.py](scripts/pw.py).
+
+To test the script, from the root of the repository, run:
+
+`python -m sage.doctest scripts/pw.py`
+

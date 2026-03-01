@@ -1,4 +1,9 @@
 """
+Run
+
+```
+python -m sage.doctest pw.py
+```
 
 - P :: A list of probabilities describing a distribution
 - S :: The password distribution
@@ -269,7 +274,7 @@ def test_adv(P, adv, trials=16, game=game, seed=None):
         sage: set_random_seed(1312)
         sage: P = [0.25, 0.25, 0.25, 0.25]
         sage: test_adv(P, advf, trials=2^16, seed=1312)
-        0.665557861328125
+        0.499435424804688
         sage: test_adv(P, advf_bad_real, trials=2^16, seed=1312)
         0.496841430664062
         sage: test_adv(P, advf_bad_S, trials=2^16, seed=1312)

@@ -1,4 +1,4 @@
-module github.com/si-co/compromise
+module github.com/si-co/abom
 
 go 1.24.2
 

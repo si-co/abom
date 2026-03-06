@@ -22,7 +22,7 @@ To test the script, from the root of the repository, run:
 `python -m sage.doctest scripts/pw.py`
 
 ## Running all tests with Docker
-If you have Docker installed, you can run both test suites without installing Go or SageMath:
+If you have Docker installed, you can run both test suites without installing Go or SageMath. From the root of the repository run the following command:
 
 `docker build -t abom .`
 

@@ -18,7 +18,7 @@ type ServerState struct {
 	com []byte
 
 	rs_cm, rs_sm   []byte
-	cnt_cm, cnt_sm uint32
+	cnt_cm, cnt_sm uint64
 }
 
 // ServerSetup verifies the client's initial message cm, binds the commitment
@@ -29,7 +29,7 @@ func ServerSetup(kappa []byte, cm Message) (bool, *ServerState, Message) {
 	rs_cm, rs_sm := KDF(kappa)
 
 	// init counters (line 2)
-	cnt_cm, cnt_sm := uint32(0), uint32(0)
+	cnt_cm, cnt_sm := uint64(0), uint64(0)
 
 	// parse cm (line 3)
 	ct := cm.Ciphertext
@@ -41,7 +41,7 @@ func ServerSetup(kappa []byte, cm Message) (bool, *ServerState, Message) {
 	k_cm, rs_cm, cnt_cm := FtK(rs_cm, cnt_cm, cnt_cm_prime)
 
 	// VtD on pt = (com, k1) (line 5)
-	acc, pt := VtD(k_cm, ct, at, [2]uint32{cnt_cm_prime, cnt_sm_prime})
+	acc, pt := VtD(k_cm, ct, at, [2]uint64{cnt_cm_prime, cnt_sm_prime})
 
 	// if fail return (line 6)
 	if !acc {
@@ -59,7 +59,7 @@ func ServerSetup(kappa []byte, cm Message) (bool, *ServerState, Message) {
 	k_sm, rs_sm := KDF(rs_sm)
 
 	// encrypt ok (need 16 bytes message for AES-CBC) (line 10)
-	ct, at = EtM(k_sm, []byte("server says: OK."), [2]uint32{cnt_cm, cnt_sm})
+	ct, at = EtM(k_sm, []byte("server says: OK."), [2]uint64{cnt_cm, cnt_sm})
 
 	// store server state (line 11)
 	ss := &ServerState{
@@ -75,7 +75,7 @@ func ServerSetup(kappa []byte, cm Message) (bool, *ServerState, Message) {
 	sm := Message{
 		Ciphertext: ct,
 		AuthTag:    at,
-		AD:         [2]uint32{cnt_cm, cnt_sm},
+		AD:         [2]uint64{cnt_cm, cnt_sm},
 	}
 
 	return true, ss, sm
@@ -106,7 +106,7 @@ func Response(ss *ServerState, cm Message) (bool, *ServerState, bool, Message) {
 	k_cm, rs_cm, cnt_cm := FtK(rs_cm, cnt_cm, cnt_cm_prime)
 
 	// VtD (line 4)
-	acc, com_prime := VtD(k_cm, ct, at, [2]uint32{cnt_cm_prime, cnt_sm_prime})
+	acc, com_prime := VtD(k_cm, ct, at, [2]uint64{cnt_cm_prime, cnt_sm_prime})
 
 	// if failure, return (line 5)
 	if !acc {
@@ -126,7 +126,7 @@ func Response(ss *ServerState, cm Message) (bool, *ServerState, bool, Message) {
 	k_sm, rs_sm := KDF(rs_sm)
 
 	// EtM with k_1 as plaintext (line 10)
-	ct, at = EtM(k_sm, k1, [2]uint32{cnt_cm, cnt_sm})
+	ct, at = EtM(k_sm, k1, [2]uint64{cnt_cm, cnt_sm})
 
 	// Update server state (lines 11 and 12)
 	ss.rs_cm = rs_cm
@@ -138,11 +138,11 @@ func Response(ss *ServerState, cm Message) (bool, *ServerState, bool, Message) {
 	return acc, ss, detect, Message{
 		Ciphertext: ct,
 		AuthTag:    at,
-		AD:         [2]uint32{cnt_cm, cnt_sm},
+		AD:         [2]uint64{cnt_cm, cnt_sm},
 	}
 }
 
 // GetCountersServer retruns the counters from the server state.
-func GetCountersServer(ss *ServerState) (uint32, uint32) {
+func GetCountersServer(ss *ServerState) (uint64, uint64) {
 	return ss.cnt_cm, ss.cnt_sm
 }

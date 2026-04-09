@@ -15,7 +15,7 @@ type DeviceState struct {
 	k_com []byte
 
 	rs_cm, rs_sm   []byte
-	cnt_cm, cnt_sm uint32
+	cnt_cm, cnt_sm uint64
 }
 
 // ClientSetup (Figure 5 in the proceedings version, Figure 10 in the full
@@ -34,7 +34,7 @@ func ClientSetup(kappa, k, ps []byte) (*DeviceState, Message) {
 	rs_cm, rs_sm := KDF(kappa)
 
 	// init counters (line 2)
-	cnt_cm, cnt_sm := uint32(0), uint32(0)
+	cnt_cm, cnt_sm := uint64(0), uint64(0)
 
 	// commitment (line 3)
 	k_com := RandomKey256()
@@ -51,7 +51,7 @@ func ClientSetup(kappa, k, ps []byte) (*DeviceState, Message) {
 	k_cm, rs_cm := KDF(rs_cm)
 
 	// EtM for (com, k1) (line 7)
-	ct, at := EtM(k_cm, append(com, k1...), [2]uint32{cnt_cm, cnt_sm})
+	ct, at := EtM(k_cm, append(com, k1...), [2]uint64{cnt_cm, cnt_sm})
 
 	// set device state (line 9)
 	ds := &DeviceState{
@@ -67,7 +67,7 @@ func ClientSetup(kappa, k, ps []byte) (*DeviceState, Message) {
 	return ds, Message{
 		Ciphertext: ct,
 		AuthTag:    at,
-		AD:         [2]uint32{cnt_cm, cnt_sm},
+		AD:         [2]uint64{cnt_cm, cnt_sm},
 	}
 }
 
@@ -92,7 +92,7 @@ func ClientDone(ds *DeviceState, sm Message) (bool, *DeviceState) {
 	k_sm, rs_sm, cnt_sm := FtK(rs_sm, cnt_sm, cnt_sm_prime)
 
 	// VtD (line 5)
-	acc, _ := VtD(k_sm, ct, at, [2]uint32{cnt_cm_prime, cnt_sm_prime})
+	acc, _ := VtD(k_sm, ct, at, [2]uint64{cnt_cm_prime, cnt_sm_prime})
 
 	// if failure return (line 5)
 	if !acc {
@@ -130,7 +130,7 @@ func Request(ds *DeviceState, ps []byte) (*DeviceState, Message) {
 	k_cm, rs_cm := KDF(rs_cm)
 
 	// EtM with com as pt (line 5)
-	ct, at := EtM(k_cm, com, [2]uint32{cnt_cm, cnt_sm})
+	ct, at := EtM(k_cm, com, [2]uint64{cnt_cm, cnt_sm})
 
 	// update ds (line 6)
 	ds.rs_cm = rs_cm
@@ -140,7 +140,7 @@ func Request(ds *DeviceState, ps []byte) (*DeviceState, Message) {
 	return ds, Message{
 		Ciphertext: ct,
 		AuthTag:    at,
-		AD:         [2]uint32{cnt_cm, ds.cnt_sm},
+		AD:         [2]uint64{cnt_cm, ds.cnt_sm},
 	}
 }
 
@@ -167,7 +167,7 @@ func GetKey(ds *DeviceState, sm Message) (bool, *DeviceState, []byte) {
 	k_sm, rs_sm, cnt_sm := FtK(rs_sm, cnt_sm, cnt_sm_prime)
 
 	// VtD (line 5)
-	acc, pt := VtD(k_sm, ct, at, [2]uint32{cnt_cm_prime, cnt_sm_prime})
+	acc, pt := VtD(k_sm, ct, at, [2]uint64{cnt_cm_prime, cnt_sm_prime})
 
 	// if failure return (line 5)
 	if !acc {
@@ -204,6 +204,6 @@ func Clear(ds *DeviceState) *DeviceState {
 }
 
 // GetCountersClient retruns the counters from the client state.
-func GetCountersClient(ds *DeviceState) (uint32, uint32) {
+func GetCountersClient(ds *DeviceState) (uint64, uint64) {
 	return ds.cnt_cm, ds.cnt_sm
 }

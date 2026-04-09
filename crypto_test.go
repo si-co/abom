@@ -11,7 +11,7 @@ func TestEtMAndVtD(t *testing.T) {
 	key := RandomKey128()
 
 	for _, plaintext := range [][]byte{[]byte("0123456789ABCDEF0123456789ABCDEF"), []byte("0123456789123456")} {
-		ad := [2]uint32{1, 2}
+		ad := [2]uint64{1, 2}
 
 		// --- Encrypt then MAC ---
 		ct, tag := EtM(key, plaintext, ad)

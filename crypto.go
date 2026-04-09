@@ -19,7 +19,7 @@ import (
 // AD[0] is cnt_cm and AD[1] is cnt_sm.
 type Message struct {
 	Ciphertext, AuthTag []byte
-	AD                  [2]uint32
+	AD                  [2]uint64
 }
 
 // xor returns the bytewise XOR of a and b up to len(a). It assumes len(a)==len(b).
@@ -57,7 +57,7 @@ func KDF(seed []byte) ([]byte, []byte) {
 // from key k, encrypts pt under k_enc, and authenticates the ciphertext and
 // associated counters under k_mac. It panics only if the underlying encryption
 // errors.
-func EtM(k, pt []byte, ad [2]uint32) ([]byte, []byte) {
+func EtM(k, pt []byte, ad [2]uint64) ([]byte, []byte) {
 	k_enc, k_mac := KDF(k)
 	ct, err := Encrypt(k_enc, pt)
 	if err != nil {
@@ -72,7 +72,7 @@ func EtM(k, pt []byte, ad [2]uint32) ([]byte, []byte) {
 // https://ia.cr/2026/252) performs Verify-then-Decrypt: it derives (k_enc,
 // k_mac) from key k, verifies the tag at over (ct, ad), and if valid decrypts
 // ct under k_enc to return the plaintext. On failure it returns (false, nil).
-func VtD(k, ct, at []byte, ad [2]uint32) (bool, []byte) {
+func VtD(k, ct, at []byte, ad [2]uint64) (bool, []byte) {
 	k_enc, k_mac := KDF(k)
 	if !VerifyMAC(k_mac, ct, ad, at) {
 		return false, nil
@@ -134,7 +134,7 @@ func Decrypt(key, ciphertext []byte) ([]byte, error) {
 }
 
 // MAC returns HMAC-SHA256 over ct concatenated with the two counters.
-func MAC(key, ct []byte, ad [2]uint32) []byte {
+func MAC(key, ct []byte, ad [2]uint64) []byte {
 	data := append(ct, byte(ad[0]), byte(ad[1]))
 	mac := hmac.New(sha256.New, key)
 	mac.Write(data)
@@ -142,7 +142,7 @@ func MAC(key, ct []byte, ad [2]uint32) []byte {
 }
 
 // VerifyMAC compares the expected and provided tags.
-func VerifyMAC(key, ct []byte, ad [2]uint32, tag []byte) bool {
+func VerifyMAC(key, ct []byte, ad [2]uint64, tag []byte) bool {
 	expected := MAC(key, ct, ad)
 	return hmac.Equal(expected, tag)
 }
@@ -153,10 +153,10 @@ func VerifyMAC(key, ct []byte, ad [2]uint32, tag []byte) bool {
 // key for ratchet position cnt_prime, the new seed rs, and the updated
 // counter. If cnt_prime<=cnt it returns (nil, rs, cnt) to signal that no
 // forward key is available.
-func FtK(rs []byte, cnt, cnt_prime uint32) ([]byte, []byte, uint32) {
+func FtK(rs []byte, cnt, cnt_prime uint64) ([]byte, []byte, uint64) {
 	k := rs
 	if cnt_prime > cnt {
-		for i := uint32(0); i < cnt_prime-cnt; i++ {
+		for i := uint64(0); i < cnt_prime-cnt; i++ {
 			k, rs = KDF(rs)
 		}
 

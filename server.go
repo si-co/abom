@@ -1,7 +1,7 @@
 package scheme
 
 import (
-	"bytes"
+	"crypto/hmac"
 )
 
 // ServerState holds the server's local state:
@@ -114,7 +114,7 @@ func Response(ss *ServerState, cm Message) (bool, *ServerState, bool, Message) {
 	}
 
 	// check commitment (line 6)
-	detect := !bytes.Equal(com, com_prime)
+	detect := !hmac.Equal(com, com_prime)
 
 	// FtK on rs_sm (line 7)
 	_, rs_sm, cnt_sm = FtK(rs_sm, cnt_sm, cnt_sm_prime)

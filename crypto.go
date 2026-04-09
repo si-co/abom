@@ -6,6 +6,7 @@ import (
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/binary"
 	"errors"
 	"io"
 
@@ -134,10 +135,12 @@ func Decrypt(key, ciphertext []byte) ([]byte, error) {
 }
 
 // MAC returns HMAC-SHA256 over ct concatenated with the two counters.
+// hmac.New returns an io.Writer, so we can write inputs directly without
+// allocating an intermediate buffer.
 func MAC(key, ct []byte, ad [2]uint64) []byte {
-	data := append(ct, byte(ad[0]), byte(ad[1]))
 	mac := hmac.New(sha256.New, key)
-	mac.Write(data)
+	mac.Write(ct)
+	binary.Write(mac, binary.LittleEndian, ad)
 	return mac.Sum(nil)
 }
 

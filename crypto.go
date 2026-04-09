@@ -52,9 +52,11 @@ func KDF(seed []byte) ([]byte, []byte) {
 	return k1, k2
 }
 
-// EtM (Figure 4) performs Encrypt-then-MAC: it derives (k_enc, k_mac) from key
-// k, encrypts pt under k_enc, and authenticates the ciphertext and associated
-// counters under k_mac. It panics only if the underlying encryption errors.
+// EtM (Figure 5 in the proceedings version, Figure 10 in the full version:
+// https://ia.cr/2026/252) performs Encrypt-then-MAC: it derives (k_enc, k_mac)
+// from key k, encrypts pt under k_enc, and authenticates the ciphertext and
+// associated counters under k_mac. It panics only if the underlying encryption
+// errors.
 func EtM(k, pt []byte, ad [2]uint32) ([]byte, []byte) {
 	k_enc, k_mac := KDF(k)
 	ct, err := Encrypt(k_enc, pt)
@@ -66,9 +68,10 @@ func EtM(k, pt []byte, ad [2]uint32) ([]byte, []byte) {
 	return ct, tag
 }
 
-// VtD (Figure 4) performs Verify-then-Decrypt: it derives (k_enc, k_mac) from
-// key k, verifies the tag at over (ct, ad), and if valid decrypts ct under
-// k_enc to return the plaintext. On failure it returns (false, nil).
+// VtD (Figure 5 in the proceedings version, Figure 10 in the full version:
+// https://ia.cr/2026/252) performs Verify-then-Decrypt: it derives (k_enc,
+// k_mac) from key k, verifies the tag at over (ct, ad), and if valid decrypts
+// ct under k_enc to return the plaintext. On failure it returns (false, nil).
 func VtD(k, ct, at []byte, ad [2]uint32) (bool, []byte) {
 	k_enc, k_mac := KDF(k)
 	if !VerifyMAC(k_mac, ct, ad, at) {
@@ -144,11 +147,12 @@ func VerifyMAC(key, ct []byte, ad [2]uint32, tag []byte) bool {
 	return hmac.Equal(expected, tag)
 }
 
-// FtK (Figure 4) advances the ratchet position from cnt to cnt_prime.  It
-// iteratively applies KDF on rs (if cnt_prime>cnt) and returns the derived key
-// for ratchet position cnt_prime, the new seed rs, and the updated counter. If
-// cnt_prime<=cnt it returns (nil, rs, cnt) to signal that no forward key is
-// available.
+// FtK (Figure 5 in the proceedings version, Figure 10 in the full version:
+// https://ia.cr/2026/252) advances the ratchet position from cnt to cnt_prime.
+// It iteratively applies KDF on rs (if cnt_prime>cnt) and returns the derived
+// key for ratchet position cnt_prime, the new seed rs, and the updated
+// counter. If cnt_prime<=cnt it returns (nil, rs, cnt) to signal that no
+// forward key is available.
 func FtK(rs []byte, cnt, cnt_prime uint32) ([]byte, []byte, uint32) {
 	k := rs
 	if cnt_prime > cnt {

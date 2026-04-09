@@ -18,8 +18,9 @@ type DeviceState struct {
 	cnt_cm, cnt_sm uint32
 }
 
-// ClientSetup (Figure 4) initializes a fresh DeviceState, which it returns
-// with the initial client message.
+// ClientSetup (Figure 5 in the proceedings version, Figure 10 in the full
+// version: https://ia.cr/2026/252) initializes a fresh DeviceState, which it
+// returns with the initial client message.
 //
 // Arguments:
 //   - kappa: initialization secret shared with the server of 32 bytes.
@@ -70,9 +71,10 @@ func ClientSetup(kappa, k, ps []byte) (*DeviceState, Message) {
 	}
 }
 
-// ClientDone (Figure 4) verifies the server message sm and, on success,
-// commits the pending ratchet state and counter back into ds. It returns
-// acc=false and leaves ds unchanged on failure.
+// ClientDone (Figure 5 in the proceedings version, Figure 10 in the full
+// version: https://ia.cr/2026/252) verifies the server message sm and, on
+// success, commits the pending ratchet state and counter back into ds. It
+// returns acc=false and leaves ds unchanged on failure.
 func ClientDone(ds *DeviceState, sm Message) (bool, *DeviceState) {
 	// extract fields from ds (line 1)
 	rs_cm := ds.rs_cm
@@ -107,9 +109,10 @@ func ClientDone(ds *DeviceState, sm Message) (bool, *DeviceState) {
 	return acc, ds
 }
 
-// Request (Figure 4) computes a new commitment to ps and encrypts it
-// into a client message, advancing the client ratchet accordingly.
-// It updates ds in place and returns the resulting message.
+// Request (Figure 5 in the proceedings version, Figure 10 in the full version:
+// https://ia.cr/2026/252) computes a new commitment to ps and encrypts it into
+// a client message, advancing the client ratchet accordingly.  It updates ds
+// in place and returns the resulting message.
 func Request(ds *DeviceState, ps []byte) (*DeviceState, Message) {
 	// extract fields from ds (line 1)
 	k_com := ds.k_com
@@ -141,7 +144,8 @@ func Request(ds *DeviceState, ps []byte) (*DeviceState, Message) {
 	}
 }
 
-// GetKey (Figure 4) processes a server message carrying k_1, verifies
+// GetKey (Figure 5 in the proceedings version, Figure 10 in the full version:
+// https://ia.cr/2026/252) processes a server message carrying k_1, verifies
 // authenticity, and on success reconstructs k = k_0 xor k_1. It updates ds in
 // place. On failure it returns acc=false and a nil key, representing \bot in
 // the specifications.
@@ -183,8 +187,9 @@ func GetKey(ds *DeviceState, sm Message) (bool, *DeviceState, []byte) {
 	return true, ds, k
 }
 
-// Clear (Figure 4) advances the server ratchet locally on the client so that
-// old server messages are no longer decryptable and cannot be used to
+// Clear (Figure 5 in the proceedings version, Figure 10 in the full version:
+// https://ia.cr/2026/252) advances the server ratchet locally on the client so
+// that old server messages are no longer decryptable and cannot be used to
 // reconstruct the session key.
 func Clear(ds *DeviceState) *DeviceState {
 	// extract fields from ds (line 1)

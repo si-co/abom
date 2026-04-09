@@ -3,10 +3,10 @@
 
 This code accompanies the paper ["At-Compromise Security: The Case for Alert Blindness"](https://eprint.iacr.org/2026/252) by Martin R. Albrecht, Simone Colombo, Benjamin Dowling and Rikke Bjerg Jensen to appear at EUROCRYPT 2026.
 
-The root directory of the repository contains the Go reference implementation of the ABOM scheme (Figure 10 of the full version linked above). The [scripts](scripts) directory contains a SageMath script that make it easier to explore the effect of the personal secret distribution S on the advantage in Definition 1 in the full version.
+The root directory of the repository contains the Go reference implementation of the ABOM scheme (Figure 5 in the proceedings version, Figure 10 of the full version linked above). The [scripts](scripts) directory contains a SageMath script that make it easier to explore the effect of the personal secret distribution S on the advantage in Definition 1 in the full version.
 
 ## ABOM scheme implementation
-This directory contains the Go reference implementation of the ABOM scheme (Figure 10 of the full version linked above).
+This directory contains the Go reference implementation of the ABOM scheme (Figure 5 in the proceedings version, Figure 10 of the full version linked above).
 
 ### Running tests
 

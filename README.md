@@ -10,7 +10,7 @@ This directory contains the Go reference implementation of the ABOM scheme (Figu
 
 ### Running tests
 
-Provided you have Go version 1.24.6 or above installed, from this directory, run:
+Provided you have Go version 1.24.2 or above installed, from this directory, run:
 
   `go test`
 

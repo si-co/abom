@@ -146,7 +146,7 @@ def advf(S, x):
     The optimal adversary against our game.
 
     :param S: A distribution.
-    :param x: A candidare element.
+    :param x: A candidate element.
 
     """
     T = S.T()
@@ -160,10 +160,10 @@ def advf(S, x):
 
 def advf_bad_S(S, x):
     """
-    A bad adversary that guesses form S instead of S_{¬x}
+    A bad adversary that guesses from S instead of S_{¬x}
 
     :param S: A distribution.
-    :param x: A candidare element.
+    :param x: A candidate element.
 
     """
     T = S.T()
@@ -179,7 +179,7 @@ def advf_bad_real(S, x):
     The 'abductor' adversary which will use the `x` it was given if it believes it to be real.
 
     :param S: A distribution.
-    :param x: A candidare element.
+    :param x: A candidate element.
 
     """
     T = S.T()
@@ -199,7 +199,7 @@ def advf_trivial(_, x):
     This adversary motivates the `b == 0` check in the conjunction.
 
     :param S: A distribution.
-    :param x: A candidare element.
+    :param x: A candidate element.
 
     """
 
